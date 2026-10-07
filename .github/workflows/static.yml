@@ -1,0 +1,1124 @@
+import { useState, useEffect } from 'react';
+
+// Configuration constants
+const CALL_NUMBER = '+918348276283';
+const WHATSAPP_NUMBER = '917584022109';
+const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20Sourav,%20I%20am%20interested%20in%20consulting%20with%20Cozy%20Spaces%20for%20an%20interior%20design%20project.%20Can%20we%20connect%3F`;
+const GOOGLE_MAPS_LINK = 'https://maps.app.goo.gl/EiuwgNw3PF5RhVny8';
+const DISPLAY_CALL = '8348276283';
+const DISPLAY_WHATSAPP = '7584022109';
+
+function CozyWordmark({ className = "", size = "md", dark = false }: { className?: string; size?: "sm" | "md" | "lg"; dark?: boolean }) {
+  const textSizeMap = {
+    sm: 'text-xl',
+    md: 'text-2xl',
+    lg: 'text-4xl sm:text-5xl'
+  };
+  const textColor = dark ? 'text-white' : 'text-[#1A1A1A]';
+
+  return (
+    <span className={`block whitespace-nowrap font-serif font-normal leading-tight tracking-[0.01em] ${textSizeMap[size]} ${textColor} ${className}`}>
+      Cozy Spaces
+    </span>
+  );
+}
+
+// Service data
+const services = [
+  {
+    id: 1,
+    title: '3D Spatial Planning & Architectural Blueprints',
+    description: 'Comprehensive space planning with detailed architectural drawings and 3D visualizations to bring your vision to life before construction begins.',
+    icon: '📐',
+    whatsappMessage: 'I am interested in 3D Spatial Planning & Architectural Blueprints service'
+  },
+  {
+    id: 2,
+    title: 'Modular Kitchen & Custom Wardrobe Systems',
+    description: 'Bespoke modular solutions designed for maximum functionality and aesthetic appeal, tailored to your space and lifestyle.',
+    icon: '🍳',
+    whatsappMessage: 'I am interested in Modular Kitchen & Custom Wardrobe Systems'
+  },
+  {
+    id: 3,
+    title: 'Turnkey Interior Renovation & Material Sourcing',
+    description: 'Complete end-to-end renovation services including premium material sourcing, project management, and quality execution.',
+    icon: '🔨',
+    whatsappMessage: 'I am interested in Turnkey Interior Renovation & Material Sourcing'
+  },
+  {
+    id: 4,
+    title: 'Luxury Lighting & Acoustic Treatments',
+    description: 'Expert lighting design and acoustic solutions to create the perfect ambiance and sound quality for your living spaces.',
+    icon: '💡',
+    whatsappMessage: 'I am interested in Luxury Lighting & Acoustic Treatments'
+  }
+];
+
+// Process steps
+const processSteps = [
+  {
+    step: '01',
+    title: 'Free Discovery & Site Visit',
+    description: 'We begin with a comprehensive consultation and site visit to understand your requirements, space constraints, and design preferences.',
+    icon: '📍'
+  },
+  {
+    step: '02',
+    title: '3D Renderings & Detailed Budgeting',
+    description: 'Receive photorealistic 3D renderings of your space along with a transparent, itemized budget breakdown for complete clarity.',
+    icon: '🖥️'
+  },
+  {
+    step: '03',
+    title: 'Execution & Strict 45-Day Delivery Timeline',
+    description: 'Our expert team executes the project with precision, adhering to a strict 45-day delivery timeline without compromising quality.',
+    icon: '⚡'
+  },
+  {
+    step: '04',
+    title: 'Final Handover & Warranty Certification',
+    description: 'Upon completion, we provide a detailed handover with a 10-year craftsmanship warranty certification for your peace of mind.',
+    icon: '🏆'
+  }
+];
+
+// Portfolio items - Actual projects delivered by Cozy Space's
+const portfolioItems = [
+  {
+    id: 1,
+    title: 'Contemporary Living Room with Wood Accent Wall',
+    category: 'Living Spaces',
+    image: '/projects/living-room.jpg',
+    budget: '₹8L - ₹12L',
+    dimensions: '350 sq.ft',
+    location: 'Kolkata'
+  },
+  {
+    id: 2,
+    title: 'Orange & White L-Shaped Modular Kitchen',
+    category: 'Modular Kitchens',
+    image: '/projects/kitchen-orange.jpg',
+    budget: '₹6L - ₹9L',
+    dimensions: '180 sq.ft',
+    location: 'Residential Project, Kolkata'
+  },
+  {
+    id: 3,
+    title: 'Master Bedroom with Custom Wardrobe System',
+    category: 'Master Suites',
+    image: '/projects/wardrobe-bedroom.jpg',
+    budget: '₹7L - ₹11L',
+    dimensions: '280 sq.ft',
+    location: 'Kolkata'
+  },
+  {
+    id: 4,
+    title: 'Eclectic Theme Cafe - Full Interior',
+    category: 'Commercial Interiors',
+    image: '/projects/cafe-interior.jpg',
+    budget: '₹12L - ₹18L',
+    dimensions: '950 sq.ft',
+    location: 'Kolkata'
+  },
+  {
+    id: 5,
+    title: 'Luxury Island Kitchen with Marble Finish & Beam Ceiling',
+    category: 'Modular Kitchens',
+    image: '/projects/kitchen-luxury.jpg',
+    budget: '₹14L - ₹20L',
+    dimensions: '320 sq.ft',
+    location: 'Premium Villa, Kolkata'
+  },
+  {
+    id: 6,
+    title: 'Cafe Corner - Yellow Grid Walls & Bamboo Accents',
+    category: 'Commercial Interiors',
+    image: '/projects/cafe-detail.jpg',
+    budget: 'Part of full cafe project',
+    dimensions: 'Detail Shot',
+    location: 'Kolkata'
+  }
+];
+
+// Testimonials
+const testimonials = [
+  {
+    id: 1,
+    name: 'Rahul Sharma',
+    role: 'Entrepreneur',
+    rating: 5,
+    review: 'Cozy Spaces transformed our 3BHK into a luxurious haven. The attention to detail and quality of work is unmatched. Highly recommended!',
+    location: 'Kolkata',
+    project: '3BHK Apartment Renovation',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80'
+  },
+  {
+    id: 2,
+    name: 'Priya Mehta',
+    role: 'Architect',
+    rating: 5,
+    review: 'Sourav and his team delivered exceptional results for our commercial office space. The 3D renderings were spot on, and execution was flawless.',
+    location: 'New Delhi',
+    project: 'Corporate Office Design',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80'
+  },
+  {
+    id: 3,
+    name: 'Amit Patel',
+    role: 'Business Owner',
+    rating: 5,
+    review: 'The modular kitchen design exceeded all our expectations. Functional, beautiful, and delivered on time. True professionals!',
+    location: 'Mumbai',
+    project: 'Modular Kitchen Installation',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&q=80'
+  },
+  {
+    id: 4,
+    name: 'Sneha Kapoor',
+    role: 'Home Maker',
+    rating: 5,
+    review: 'From concept to completion, Cozy Spaces made our dream home a reality. The 10-year warranty gives us complete peace of mind.',
+    location: 'Kolkata',
+    project: 'Villa Interior Design',
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&q=80'
+  }
+];
+
+// Header Component
+function Header() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navItems = [
+    { name: 'Portfolio', href: '#portfolio' },
+    { name: 'Services', href: '#services' },
+    { name: 'Process', href: '#process' },
+    { name: 'Reviews', href: '#reviews' },
+    { name: 'Contact', href: '#contact' }
+  ];
+
+  return (
+    <>
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-alabaster/95 backdrop-blur-sm shadow-sm' 
+          : 'bg-transparent'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <a href="#top" className="flex items-center h-16">
+              <CozyWordmark size="sm" />
+            </a>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-8">
+              {navItems.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-slate-dark hover:text-taupe transition-colors font-medium text-sm tracking-wide"
+                >
+                  {item.name}
+                </a>
+              ))}
+            </nav>
+
+            {/* CTA Button */}
+            <a
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-block bg-slate-dark text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-charcoal transition-all shadow-sm hover:shadow-md"
+            >
+              Book Consultation
+            </a>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-warm-gray/50 transition-colors"
+            >
+              <svg className="w-6 h-6 text-slate-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {isMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden fixed inset-0 bg-slate-dark/95 backdrop-blur-sm z-40">
+          <div className="absolute top-6 left-1/2 -translate-x-1/2">
+            <CozyWordmark size="md" dark={true} />
+          </div>
+          <div className="flex flex-col items-center justify-center h-full space-y-8">
+            {navItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                onClick={() => setIsMenuOpen(false)}
+                className="text-white text-xl font-medium hover:text-champagne transition-colors"
+              >
+                {item.name}
+              </a>
+            ))}
+            <a
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setIsMenuOpen(false)}
+              className="bg-champagne text-slate-dark px-8 py-3 rounded-full text-lg font-medium hover:bg-champagne/90 transition-all mt-4"
+            >
+              Book Consultation
+            </a>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// Floating WhatsApp Button
+function FloatingWhatsAppButton() {
+  return (
+    <a
+      href={WHATSAPP_LINK}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="fixed bottom-6 right-6 z-50 group"
+    >
+      <div className="flex flex-col items-end space-y-2">
+        <div className="bg-slate-dark text-white px-4 py-2 rounded-full text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap mb-2">
+          Chat with Sourav
+        </div>
+        <div className="relative">
+          <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all whatsapp-pulse">
+            <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004v.004h-.004v.004h-.004c-.254 0-.458-.206-.458-.463v-.004c0-.257.204-.463.458-.463h.004v-.004h.004v-.004h.004c.254 0 .458.206.458.463v.004c0 .257-.204.463-.458.463" />
+            </svg>
+          </div>
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">1</span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+// Mobile Bottom Bar
+function MobileBottomBar() {
+  return (
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-alabaster border-t border-warm-gray/30 z-40">
+      <div className="flex items-center justify-between px-4 py-3">
+          <a
+            href={`tel:${CALL_NUMBER}`}
+            className="flex-1 text-center text-sm font-medium text-slate-dark bg-warm-gray/20 py-2.5 rounded-lg hover:bg-warm-gray/30 transition-colors"
+          >
+            Call Now
+          </a>
+          <span className="w-px h-8 bg-warm-gray/40 mx-2"></span>
+          <a
+            href={WHATSAPP_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 text-center text-sm font-medium text-white bg-slate-dark py-2.5 rounded-lg hover:bg-charcoal transition-colors"
+          >
+            WhatsApp
+          </a>
+      </div>
+    </div>
+  );
+}
+
+// Hero Section
+function HeroSection() {
+  return (
+    <section className="relative min-h-screen bg-gradient-alabaster flex items-center">
+      {/* Background Image Overlay */}
+      <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{
+        backgroundImage: 'url(/projects/kitchen-luxury.jpg)'
+      }}></div>
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Hero Content */}
+          <div className="space-y-8">
+            <div className="mb-2">
+              <CozyWordmark size="lg" />
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-dark leading-tight">
+              Transforming Empty Spaces into 
+              <span className="text-gradient-taupe">Timeless Living Experiences</span>
+            </h1>
+            
+            <p className="text-lg sm:text-xl text-charcoal/70 leading-relaxed max-w-lg">
+              Bespoke interior architecture and turnkey home transformations designed for modern luxury and functional comfort.
+            </p>
+            
+            {/* Social Proof */}
+            <div className="flex flex-wrap items-center gap-6 text-sm text-charcoal/60">
+              <div className="flex items-center gap-2">
+                <span className="text-yellow-500">★★★★★</span>
+                <span>4.9+ Google Rated</span>
+              </div>
+              <span className="w-px h-4 bg-warm-gray/40"></span>
+              <div className="flex items-center gap-2">
+                <span className="text-taupe">🏠</span>
+                <span>100+ Homes Transformed</span>
+              </div>
+              <span className="w-px h-4 bg-warm-gray/40"></span>
+              <div className="flex items-center gap-2">
+                <span className="text-taupe">🛡️</span>
+                <span>10-Year Craftsmanship Guarantee</span>
+              </div>
+            </div>
+            
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <a
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 bg-slate-dark text-white px-8 py-4 rounded-full font-medium hover:bg-charcoal transition-all shadow-lg hover:shadow-xl"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004v.004h-.004v.004h-.004c-.254 0-.458-.206-.458-.463v-.004c0-.257.204-.463.458-.463h.004v-.004h.004v-.004h.004c.254 0 .458.206.458.463v.004c0 .257-.204.463-.458.463" />
+                </svg>
+                Chat on WhatsApp (Instant Reply)
+              </a>
+              <a
+                href="#portfolio"
+                className="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-slate-dark text-slate-dark px-8 py-4 rounded-full font-medium hover:bg-slate-dark hover:text-white transition-all"
+              >
+                Explore Recent Works
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </a>
+            </div>
+          </div>
+          
+          {/* Hero Image */}
+          <div className="relative hidden lg:block">
+            <div className="absolute inset-0 bg-gradient-to-l from-alabaster via-cream/50 to-transparent rounded-3xl"></div>
+            <img
+              src="/projects/kitchen-luxury.jpg"
+              alt="Luxury Modular Kitchen with Island by Cozy Spaces"
+              className="relative z-10 w-full h-[500px] object-cover rounded-3xl shadow-2xl"
+            />
+            <div className="absolute bottom-6 right-6 bg-white/95 backdrop-blur-sm p-4 rounded-2xl shadow-lg">
+              <p className="text-sm text-charcoal/60 mb-1">Featured Project</p>
+              <p className="font-semibold text-slate-dark">Luxury Island Kitchen</p>
+              <p className="text-xs text-taupe">Premium Villa, Kolkata</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </section>
+  );
+}
+
+// Portfolio Section
+function PortfolioSection() {
+  const [activeFilter, setActiveFilter] = useState('All');
+
+  
+  const categories = ['All', 'Living Spaces', 'Modular Kitchens', 'Master Suites', 'Commercial Interiors'];
+  
+  const filteredItems = activeFilter === 'All' 
+    ? portfolioItems 
+    : portfolioItems.filter(item => item.category === activeFilter);
+
+  return (
+    <section id="portfolio" className="py-20 bg-cream">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <span className="text-taupe text-sm font-medium tracking-widest uppercase">Our Work</span>
+          <h2 className="text-4xl sm:text-5xl font-bold text-slate-dark mt-4">
+            Featured <span className="text-gradient-taupe">Projects</span>
+          </h2>
+          <p className="text-lg text-charcoal/70 mt-6 max-w-2xl mx-auto">
+            Explore our curated collection of interior design projects showcasing modern luxury and functional elegance.
+          </p>
+        </div>
+        
+        {/* Filter Tabs */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveFilter(category)}
+              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
+                activeFilter === category
+                  ? 'bg-slate-dark text-white shadow-md'
+                  : 'bg-white text-charcoal/70 hover:bg-warm-gray/50 border border-warm-gray/30'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+        
+        {/* Portfolio Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredItems.map((item) => (
+            <a
+              key={item.id}
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Sourav, I am interested in the ${item.title} project (${item.category}). Can we discuss a similar project?`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative overflow-hidden rounded-3xl shadow-lg hover:shadow-2xl transition-all block cursor-pointer"
+            >
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              
+              {/* Overlay Content */}
+              <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                <div className="transform transition-transform duration-300 group-hover:translate-y-0 translate-y-full">
+                  <span className="text-xs font-medium text-champagne uppercase tracking-widest mb-2 block">
+                    {item.category}
+                  </span>
+                  <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+                  <div className="flex items-center gap-4 text-sm opacity-80">
+                    <span>{item.dimensions}</span>
+                    <span className="w-px h-4 bg-white/40"></span>
+                    <span>{item.budget}</span>
+                  </div>
+                  <p className="text-xs opacity-60 mt-1">{item.location}</p>
+                </div>
+              </div>
+              
+              {/* Inquire Button */}
+              <div className="absolute top-6 right-6">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004v.004h-.004v.004h-.004c-.254 0-.458-.206-.458-.463v-.004c0-.257.204-.463.458-.463h.004v-.004h.004v-.004h.004c.254 0 .458.206.458.463v.004c0 .257-.204.463-.458.463" />
+                  </svg>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+        
+        {/* View All Button */}
+        <div className="text-center mt-12">
+          <a
+            href={WHATSAPP_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-slate-dark text-slate-dark px-8 py-3 rounded-full font-medium hover:bg-slate-dark hover:text-white transition-all"
+          >
+            View All Projects
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Services Section
+function ServicesSection() {
+  return (
+    <section id="services" className="py-20 bg-alabaster">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <span className="text-taupe text-sm font-medium tracking-widest uppercase">What We Offer</span>
+          <h2 className="text-4xl sm:text-5xl font-bold text-slate-dark mt-4">
+            Our <span className="text-gradient-taupe">Signature Services</span>
+          </h2>
+          <p className="text-lg text-charcoal/70 mt-6 max-w-2xl mx-auto">
+            Comprehensive interior design solutions tailored to your lifestyle and preferences.
+          </p>
+        </div>
+        
+        {/* Services Grid */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {services.map((service) => (
+            <div
+              key={service.id}
+              className="bg-cream p-8 rounded-3xl shadow-sm hover:shadow-lg transition-all group"
+            >
+              <div className="flex items-start gap-6">
+                <div className="flex-shrink-0 w-14 h-14 bg-taupe/10 rounded-2xl flex items-center justify-center group-hover:bg-taupe/20 transition-colors">
+                  <span className="text-2xl">{service.icon}</span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-slate-dark mb-3">{service.title}</h3>
+                  <p className="text-charcoal/70 mb-6 leading-relaxed">{service.description}</p>
+                  <a
+                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Sourav, ${service.whatsappMessage}. Can we connect?`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-slate-dark font-medium hover:text-taupe transition-colors"
+                  >
+                    Inquire for this Service
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Process Section
+function ProcessSection() {
+  return (
+    <section id="process" className="py-20 bg-gradient-slate text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <span className="text-champagne text-sm font-medium tracking-widest uppercase">How We Work</span>
+          <h2 className="text-4xl sm:text-5xl font-bold mt-4">
+            Our <span className="text-champagne">Transparent Process</span>
+          </h2>
+          <p className="text-lg text-white/70 mt-6 max-w-2xl mx-auto">
+            A step-by-step approach ensuring clarity, quality, and timely delivery for every project.
+          </p>
+        </div>
+        
+        {/* Process Steps */}
+        <div className="space-y-8">
+          {processSteps.map((step, index) => (
+            <div
+              key={step.step}
+              className="grid md:grid-cols-2 gap-8 items-center"
+            >
+              <div className="flex items-start gap-6">
+                <div className="flex-shrink-0 w-16 h-16 bg-champagne/10 rounded-2xl flex items-center justify-center">
+                  <span className="text-3xl">{step.icon}</span>
+                </div>
+                <div>
+                  <span className="text-champagne text-sm font-bold tracking-widest">STEP {step.step}</span>
+                  <h3 className="text-2xl font-bold mt-2 mb-4">{step.title}</h3>
+                  <p className="text-white/70 leading-relaxed">{step.description}</p>
+                </div>
+              </div>
+              
+              {/* Divider */}
+              {index < processSteps.length - 1 && (
+                <div className="hidden md:block col-start-1 col-end-2 row-start-1 row-end-2 self-center justify-self-end pr-8">
+                  <div className="w-px h-16 bg-white/20"></div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Testimonials Section
+function TestimonialsSection() {
+  return (
+    <section id="reviews" className="py-20 bg-cream">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <span className="text-taupe text-sm font-medium tracking-widest uppercase">Client Stories</span>
+          <h2 className="text-4xl sm:text-5xl font-bold text-slate-dark mt-4">
+            What Our <span className="text-gradient-taupe">Clients Say</span>
+          </h2>
+          <p className="text-lg text-charcoal/70 mt-6 max-w-2xl mx-auto">
+            Hear from our satisfied clients who have experienced the Cozy Spaces difference.
+          </p>
+        </div>
+        
+        {/* Google Trust Card */}
+        <div className="text-center mb-12">
+          <a
+            href={GOOGLE_MAPS_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all"
+          >
+            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm text-charcoal/60">View our verified reviews on</p>
+              <p className="font-bold text-slate-dark">Google Maps</p>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="text-yellow-500">★★★★★</span>
+              <span className="font-bold text-slate-dark">4.9+</span>
+            </div>
+            <svg className="w-5 h-5 text-charcoal/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
+        
+        {/* Testimonials Grid */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {testimonials.map((testimonial) => (
+            <div
+              key={testimonial.id}
+              className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-lg transition-all"
+            >
+              <div className="flex items-start gap-6">
+                <img
+                  src={testimonial.avatar}
+                  alt={testimonial.name}
+                  className="w-16 h-16 rounded-2xl object-cover flex-shrink-0"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-yellow-500">{'★'.repeat(testimonial.rating)}</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-dark mb-2">{testimonial.name}</h3>
+                  <p className="text-sm text-taupe mb-1">{testimonial.role}</p>
+                  <p className="text-xs text-charcoal/50 mb-4">{testimonial.location} | {testimonial.project}</p>
+                  <p className="text-charcoal/70 leading-relaxed italic">
+                    "{testimonial.review}"
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Consultation Form Section
+function ConsultationFormSection() {
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    spaceType: '2BHK',
+    budget: '10L-20L',
+    notes: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ success: boolean; message: string } | null>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Validate form
+    if (!formData.name.trim() || !formData.phone.trim()) {
+      setSubmitStatus({ success: false, message: 'Please fill in all required fields.' });
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Simulate form submission
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitStatus({ 
+        success: true, 
+        message: 'Thank you! Redirecting to WhatsApp...' 
+      });
+      
+      // Redirect to WhatsApp after 2 seconds
+      setTimeout(() => {
+        const message = `Hi Sourav, I am ${formData.name}. Phone: ${formData.phone}. Space Type: ${formData.spaceType}. Budget: ${formData.budget}. Notes: ${formData.notes}`;
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+      }, 2000);
+    }, 1500);
+  };
+
+  const spaceTypes = ['2BHK', '3BHK', 'Villa', 'Office', 'Apartment', 'Commercial Space'];
+  const budgetRanges = ['10L-20L', '20L-30L', '30L-50L', '50L+'];
+
+  return (
+    <section id="contact" className="py-20 bg-alabaster">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <div>
+            <span className="text-taupe text-sm font-medium tracking-widest uppercase">Get Started</span>
+            <h2 className="text-4xl sm:text-5xl font-bold text-slate-dark mt-4">
+              Book Your <span className="text-gradient-taupe">Free Consultation</span>
+            </h2>
+            <p className="text-lg text-charcoal/70 mt-6">
+              Schedule a free discovery call with Sourav to discuss your interior design project. We'll visit your site, understand your needs, and provide expert guidance.
+            </p>
+            
+            <div className="mt-8 space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-charcoal/60">Call us directly</p>
+                  <a href={`tel:${CALL_NUMBER}`} className="font-bold text-slate-dark text-lg hover:text-taupe transition-colors">
+                    {DISPLAY_CALL}
+                  </a>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004v.004h-.004v.004h-.004c-.254 0-.458-.206-.458-.463v-.004c0-.257.204-.463.458-.463h.004v-.004h.004v-.004h.004c.254 0 .458.206.458.463v.004c0 .257-.204.463-.458.463" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-charcoal/60">WhatsApp us instantly</p>
+                  <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="font-bold text-slate-dark text-lg hover:text-taupe transition-colors">
+                    {DISPLAY_WHATSAPP}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Form */}
+          <div className="bg-white p-8 rounded-3xl shadow-lg">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {submitStatus && (
+                <div className={`p-4 rounded-xl ${submitStatus.success ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
+                  {submitStatus.message}
+                </div>
+              )}
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-dark mb-2">Full Name *</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter your full name"
+                  className="w-full px-4 py-3 rounded-xl border border-warm-gray/30 focus:border-taupe focus:outline-none transition-all bg-light-cream"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-dark mb-2">Phone Number *</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Enter your phone number"
+                  className="w-full px-4 py-3 rounded-xl border border-warm-gray/30 focus:border-taupe focus:outline-none transition-all bg-light-cream"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-dark mb-2">Space Type</label>
+                <select
+                  name="spaceType"
+                  value={formData.spaceType}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-warm-gray/30 focus:border-taupe focus:outline-none transition-all bg-light-cream"
+                >
+                  {spaceTypes.map(type => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-dark mb-2">Estimated Budget</label>
+                <select
+                  name="budget"
+                  value={formData.budget}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-warm-gray/30 focus:border-taupe focus:outline-none transition-all bg-light-cream"
+                >
+                  {budgetRanges.map(range => (
+                    <option key={range} value={range}>₹{range}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-dark mb-2">Additional Notes</label>
+                <textarea
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleChange}
+                  placeholder="Any specific requirements or preferences..."
+                  rows={4}
+                  className="w-full px-4 py-3 rounded-xl border border-warm-gray/30 focus:border-taupe focus:outline-none transition-all bg-light-cream resize-none"
+                />
+              </div>
+              
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-slate-dark text-white py-4 rounded-xl font-medium hover:bg-charcoal transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                    Submit Inquiry
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Google Maps Section
+function GoogleMapsSection() {
+  return (
+    <section className="py-20 bg-gradient-slate">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-8">
+          <span className="text-champagne text-sm font-medium tracking-widest uppercase">Visit Us</span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mt-3">
+            Find Our <span className="text-champagne">Studio Location</span>
+          </h2>
+        </div>
+        <div className="bg-white rounded-3xl overflow-hidden shadow-2xl">
+          <div className="h-80 md:h-[450px] relative">
+            {/* Google Maps Embed - Kolkata */}
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29477.8765432!2d88.35!3d22.57!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0277bf4c7e3bff%3A0x51c9359f28e8a2ed!2sKolkata%2C%20West%20Bengal!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Cozy Spaces Studio Location"
+              className="absolute inset-0"
+            ></iframe>
+            {/* Overlay Button */}
+            <div className="absolute bottom-4 right-4 z-10">
+              <a
+                href={GOOGLE_MAPS_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-white px-5 py-3 rounded-full font-medium text-slate-dark shadow-lg hover:shadow-xl transition-all text-sm"
+              >
+                <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                </svg>
+                Open in Google Maps
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Final CTA Section
+function FinalCTASection() {
+  return (
+    <section className="py-20 bg-gradient-to-br from-champagne/20 via-cream to-alabaster">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-4xl sm:text-5xl font-bold text-slate-dark mb-6">
+          Ready to Transform Your Space?
+        </h2>
+        <p className="text-lg text-charcoal/70 mb-10 max-w-2xl mx-auto">
+          Contact us today to schedule your free consultation and begin your journey towards a beautifully designed home or office.
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href={`tel:${CALL_NUMBER}`}
+            className="inline-flex items-center justify-center gap-2 bg-slate-dark text-white px-8 py-4 rounded-full font-medium hover:bg-charcoal transition-all shadow-lg hover:shadow-xl"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            Call: {DISPLAY_CALL}
+          </a>
+          <a
+            href={WHATSAPP_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 bg-green-500 text-white px-8 py-4 rounded-full font-medium hover:bg-green-600 transition-all shadow-lg hover:shadow-xl"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004v.004h-.004v.004h-.004c-.254 0-.458-.206-.458-.463v-.004c0-.257.204-.463.458-.463h.004v-.004h.004v-.004h.004c.254 0 .458.206.458.463v.004c0 .257-.204.463-.458.463" />
+            </svg>
+            Chat on WhatsApp
+          </a>
+        </div>
+        
+        <div className="mt-8 flex items-center justify-center gap-6 text-sm text-charcoal/60">
+          <div className="flex items-center gap-2">
+            <span className="text-yellow-500">★★★★★</span>
+            <span>4.9+ Google Rated</span>
+          </div>
+          <span className="w-px h-4 bg-warm-gray/40"></span>
+          <div className="flex items-center gap-2">
+            <span className="text-taupe">🏠</span>
+            <span>100+ Homes Transformed</span>
+          </div>
+          <span className="w-px h-4 bg-warm-gray/40"></span>
+          <div className="flex items-center gap-2">
+            <span className="text-taupe">🛡️</span>
+            <span>10-Year Craftsmanship Guarantee</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Footer
+function Footer() {
+  return (
+    <footer className="bg-slate-dark text-white py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid md:grid-cols-4 gap-8 mb-12">
+          {/* Brand */}
+          <div className="md:col-span-1">
+            <div className="mb-6">
+              <CozyWordmark size="md" dark={true} />
+            </div>
+            <p className="text-white/70 text-sm leading-relaxed mb-6">
+              Transforming spaces into timeless living experiences with modern luxury and functional comfort.
+            </p>
+            <div className="flex items-center gap-2">
+              <span className="text-yellow-500">★★★★★</span>
+              <span className="text-sm">4.9+ Google Rated</span>
+            </div>
+          </div>
+          
+          {/* Quick Links */}
+          <div>
+            <h4 className="font-bold text-lg mb-6">Quick Links</h4>
+            <ul className="space-y-3 text-sm text-white/70">
+              <li><a href="#portfolio" className="hover:text-white transition-colors">Portfolio</a></li>
+              <li><a href="#services" className="hover:text-white transition-colors">Services</a></li>
+              <li><a href="#process" className="hover:text-white transition-colors">Process</a></li>
+              <li><a href="#reviews" className="hover:text-white transition-colors">Reviews</a></li>
+              <li><a href="#contact" className="hover:text-white transition-colors">Contact</a></li>
+            </ul>
+          </div>
+          
+            {/* Services */}
+            <div>
+              <h4 className="font-bold text-lg mb-6">Services</h4>
+              <ul className="space-y-3 text-sm text-white/70">
+                <li><a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">3D Spatial Planning</a></li>
+                <li><a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Modular Kitchens</a></li>
+                <li><a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Turnkey Renovation</a></li>
+                <li><a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Luxury Lighting</a></li>
+              </ul>
+            </div>
+          
+          {/* Contact */}
+          <div>
+            <h4 className="font-bold text-lg mb-6">Contact</h4>
+            <ul className="space-y-4 text-sm text-white/70">
+              <li className="flex items-start gap-3">
+                <svg className="w-5 h-5 text-champagne flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+                <a href={`tel:${CALL_NUMBER}`} className="hover:text-white transition-colors">{DISPLAY_CALL}</a>
+              </li>
+              <li className="flex items-start gap-3">
+                <svg className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004v.004h-.004v.004h-.004c-.254 0-.458-.206-.458-.463v-.004c0-.257.204-.463.458-.463h.004v-.004h.004v-.004h.004c.254 0 .458.206.458.463v.004c0 .257-.204.463-.458.463" />
+                </svg>
+                <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">{DISPLAY_WHATSAPP} (WhatsApp)</a>
+              </li>
+              <li className="flex items-start gap-3">
+                <svg className="w-5 h-5 text-champagne flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <a href={GOOGLE_MAPS_LINK} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">View on Google Maps</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        {/* Bottom Bar */}
+        <div className="border-t border-white/10 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-white/60">
+              © {new Date().getFullYear()} Cozy Spaces by Sourav Sardar. All rights reserved.
+            </p>
+            <div className="flex items-center gap-4">
+              <a href="#" className="text-white/60 hover:text-white transition-colors text-sm">Privacy Policy</a>
+              <a href="#" className="text-white/60 hover:text-white transition-colors text-sm">Terms of Service</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// Main App Component
+function App() {
+  return (
+    <div id="top" className="min-h-screen bg-alabaster pb-20 md:pb-0">
+      <Header />
+      <main>
+        <HeroSection />
+        <PortfolioSection />
+        <ServicesSection />
+        <ProcessSection />
+        <TestimonialsSection />
+        <GoogleMapsSection />
+        <ConsultationFormSection />
+        <FinalCTASection />
+      </main>
+      <Footer />
+      <FloatingWhatsAppButton />
+      <MobileBottomBar />
+    </div>
+  );
+}
+
+export default App;
